@@ -70,6 +70,8 @@ namespace LocalBusiness.Controllers
         return BadRequest();
       }
 
+      _db.Businesses.Update(business);
+
       try
       {
         await _db.SaveChangesAsync();
