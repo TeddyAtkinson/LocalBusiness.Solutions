@@ -1,32 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using LocalBusiness.Models;
 
-namespace LocalBusinessAPI.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+namespace LocalBusiness.Controllers
 {
-    private static readonly string[] Summaries = new[]
+  [Route("api/[controller]")]
+  [ApiController]
+  public class BusinessController : ControllerBase
+  {
+    private readonly LocalBusinessContext _db;
+    public BusinessController(LocalBusinessContext db)
     {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
-    {
-        _logger = logger;
+      _db = db;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Business>>> Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateTime.Now.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+      return await _db.Businesses.ToListAsync();
     }
+
+    [HttpPost]
+    public async Task<ActionResult<Business>> Post(Business business)
+    {
+      _db.Businesses.Add(business);
+      await _db.SaveChangesAsync();
+
+      return CreatedAtAction(nameof(GetBusiness), new { id = business.BusinessId }, business);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<Business>> GetBusiness(int id)
+    {
+      var business = await _db.Businesses.FindAsync(id);
+
+      if (business == null)
+      {
+        return NotFound();
+      }
+
+      return business;
+    }
+  }
 }
