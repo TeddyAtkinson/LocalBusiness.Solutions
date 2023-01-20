@@ -18,9 +18,26 @@ namespace LocalBusiness.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Business>>> Get()
+    public async Task<ActionResult<IEnumerable<Business>>> Get(string name, string businestype, string phone)
     {
-      return await _db.Businesses.ToListAsync();
+      IQueryable<Business> query = _db.Businesses.AsQueryable();
+
+      if (name != null)
+      {
+        query = query.Where(entry => entry.Name == name);
+      }
+
+      if (businestype != null)
+      {
+        query = query.Where(entry => entry.BusinessType == businestype);
+      }
+
+      if (phone != null)
+      {
+        query = query.Where(entry => entry.Phone == phone);
+      }
+
+      return await query.ToListAsync();
     }
 
     [HttpPost]
@@ -35,7 +52,7 @@ namespace LocalBusiness.Controllers
     [HttpGet("{id}")]
     public async Task<ActionResult<Business>> GetBusiness(int id)
     {
-      var business = await _db.Businesses.FindAsync(id);
+      Business business = await _db.Businesses.FindAsync(id);
 
       if (business == null)
       {
@@ -74,7 +91,7 @@ namespace LocalBusiness.Controllers
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBusiness(int id)
     {
-      var business = await _db.Businesses.FindAsync(id);
+      Business business = await _db.Businesses.FindAsync(id);
 
       if (business == null)
       {
