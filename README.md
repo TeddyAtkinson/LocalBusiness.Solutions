@@ -6,12 +6,12 @@
 
 ## Technologies Used
 
-- C#
-- ASP.NET 6 Core
-- MySQL
-- Entity Framework Core
-- Swagger
-- Paginated
+- _C#_
+- _ASP.NET 6 Core_
+- _MySQL_
+- _Entity Framework Core_
+- _Swagger_
+- _Paginated_
 
 ## Description
 
